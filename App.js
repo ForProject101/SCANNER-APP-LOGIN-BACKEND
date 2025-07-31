@@ -1,12 +1,20 @@
+// App.tsx (or App.js if you're using JS, but TS is recommended)
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import AuthNavigator from './frontend/src/screens/navigation/AuthNavigator';
+
+
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      
+
+      {/* Your auth screens */}
+      <AuthNavigator />
+    </NavigationContainer>
   );
 }
 

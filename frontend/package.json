@@ -5,8 +5,8 @@
   "scripts": {
     "start": "expo start",
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "android": "expo run:android",
-    "ios": "expo run:ios",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
     "web": "expo start --web"
   },
   "dependencies": {
@@ -17,17 +17,15 @@
     "dotenv": "^17.2.1",
     "expo": "~53.0.20",
     "expo-barcode-scanner": "^13.0.1",
-    "expo-camera": "~16.1.11",
-    "expo-dev-client": "~5.2.4",
     "expo-status-bar": "~2.2.3",
     "mongodb": "^6.18.0",
     "react": "19.0.0",
     "react-native": "0.79.5",
     "react-native-camera": "^4.2.1",
     "react-native-gesture-handler": "^2.27.2",
+    "react-native-reanimated": "^4.0.1",
     "react-native-safe-area-context": "^5.5.2",
-    "react-native-screens": "^4.13.1",
-    "@expo/vector-icons": "^14.1.0"
+    "react-native-screens": "^4.13.1"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
