@@ -19,8 +19,7 @@
     "production": {
       "distribution": "store",
       "android": {
-        "buildType": "apk",
-        "runtimeVersion": "1.0.0"
+        "buildType": "apk"
       }
     }
   },

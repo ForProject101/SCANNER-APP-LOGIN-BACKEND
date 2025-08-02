@@ -14,7 +14,7 @@
       "enabled": true,
       "fallbackToCacheTimeout": 0
     },
-    "runtimeVersion": "1.0.0",
+    
     "assetBundlePatterns": [
       "**/*"
     ],
