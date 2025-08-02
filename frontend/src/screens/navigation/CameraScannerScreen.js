@@ -1,13 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Vibration } from 'react-native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Vibration } from 'react-native';
 import { Camera, CameraType } from 'expo-camera';
 import { MaterialIcons } from '@expo/vector-icons';
 
 export default function CameraScanner({ navigation }) {
-  const [hasPermission, setHasPermission] = useState(null);
+  const [hasPermission, setHasPermission] = useState<boolean | null>(null);
   const [scanned, setScanned] = useState(false);
   const [type, setType] = useState(CameraType.back);
-  const cameraRef = useRef(null);
+  const cameraRef = useRef<Camera>(null);
 
   useEffect(() => {
     (async () => {
@@ -20,27 +20,32 @@ export default function CameraScanner({ navigation }) {
     if (scanned) return;
     setScanned(true);
     Vibration.vibrate(100);
-
-    setTimeout(() => {
-      navigation.navigate('Home', {
-        scannedFromCamera: true,
-        barcodeData: data,
-      });
-    }, 1000);
+    navigation.navigate('Home', {
+      scannedFromCamera: true,
+      barcodeData: data,
+    });
   };
 
   const flipCamera = () => {
-    setType((prev) =>
-      prev === CameraType.back ? CameraType.front : CameraType.back
+    setType((prevType) =>
+      prevType === CameraType.back ? CameraType.front : CameraType.back
     );
   };
 
   if (hasPermission === null) {
-    return <Text>Requesting camera permission...</Text>;
+    return (
+      <View style={styles.center}>
+        <Text>Requesting camera permission...</Text>
+      </View>
+    );
   }
 
   if (hasPermission === false) {
-    return <Text>No access to camera.</Text>;
+    return (
+      <View style={styles.center}>
+        <Text>No access to camera.</Text>
+      </View>
+    );
   }
 
   return (
@@ -51,15 +56,18 @@ export default function CameraScanner({ navigation }) {
         type={type}
         onBarCodeScanned={handleBarCodeScanned}
         barCodeScannerSettings={{
-          barCodeTypes: ['qr', 'code128', 'code39', 'ean13', 'ean8', 'upc_a', 'upc_e'],
+          barCodeTypes: ['qr', 'ean13', 'code128'], // Add/remove formats as needed
         }}
       />
+
       <View style={styles.controls}>
         <TouchableOpacity style={styles.button} onPress={flipCamera}>
           <MaterialIcons name="flip-camera-android" size={24} color="#fff" />
           <Text style={styles.buttonText}>Flip</Text>
         </TouchableOpacity>
-        {scanned && <Text style={styles.scanText}>Scan complete. Redirecting...</Text>}
+        {scanned && (
+          <Text style={styles.scanText}>Scan complete. Redirecting...</Text>
+        )}
       </View>
     </View>
   );
@@ -73,22 +81,27 @@ const styles = StyleSheet.create({
     left: 20,
     right: 20,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   button: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#007AFF',
-    padding: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 20,
     borderRadius: 8,
   },
-  buttonText: {
-    color: '#fff',
-    marginLeft: 8,
-    fontSize: 16,
-  },
+  buttonText: { color: '#fff', marginLeft: 8, fontSize: 16 },
   scanText: {
-    marginTop: 10,
+    marginTop: 15,
     color: '#fff',
+    fontSize: 16,
     fontWeight: '600',
+    textAlign: 'center',
+  },
+  center: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

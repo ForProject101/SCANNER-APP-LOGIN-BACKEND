@@ -28,8 +28,6 @@
         "projectId": "98fb71e4-9a58-408d-96e9-2cbfca083e7d"
       }
     },
-    "plugins": [
-      "expo-barcode-scanner"
-    ]
+    "plugins": []
   }
 }
