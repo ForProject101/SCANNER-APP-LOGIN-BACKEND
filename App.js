@@ -1,28 +1,51 @@
-// App.tsx (or App.js if you're using JS, but TS is recommended)
-import React from 'react';
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import * as Updates from 'expo-updates';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './frontend/src/screens/navigation/AuthNavigator';
 
-
-
 export default function App() {
+  const [isCheckingForUpdate, setIsCheckingForUpdate] = useState(true);
+
+  useEffect(() => {
+    const checkUpdates = async () => {
+      try {
+        const update = await Updates.checkForUpdateAsync();
+        if (update.isAvailable) {
+          await Updates.fetchUpdateAsync();
+          await Updates.reloadAsync();
+        } else {
+          setIsCheckingForUpdate(false);
+        }
+      } catch (error) {
+        console.error('Error checking for OTA updates:', error);
+        setIsCheckingForUpdate(false);
+      }
+    };
+
+    checkUpdates();
+  }, []);
+
+  if (isCheckingForUpdate) {
+    return (
+      <View style={styles.loader}>
+        <ActivityIndicator size="large" color="#007AFF" />
+      </View>
+    );
+  }
+
   return (
     <NavigationContainer>
-      
-
-      {/* Your auth screens */}
       <AuthNavigator />
     </NavigationContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  loader: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#f2f2f2',
   },
 });

@@ -27,7 +27,8 @@
     "react-native-gesture-handler": "^2.27.2",
     "react-native-safe-area-context": "^5.5.2",
     "react-native-screens": "^4.13.1",
-    "@expo/vector-icons": "^14.1.0"
+    "@expo/vector-icons": "^14.1.0",
+    "expo-updates": "~0.28.17"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

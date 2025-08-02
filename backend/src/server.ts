@@ -1,32 +1,45 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import cors from 'cors';
 import dotenv from 'dotenv';
-dotenv.config();
+import cors from 'cors';
 
+// Import routes
 import authRoutes from './routes/auth';
 import sessionRoutes from './routes/sessions';
+import operationsRoutes from './routes/operations';
+
+dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: '*',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
 app.use(express.json());
 
-// Test Route
-app.get('/', (_, res) => res.send('Technician API is running ✅'));
+// Test endpoint
+app.get('/', (_, res) => {
+  res.send('Technician API is running');
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/sessions', sessionRoutes);
+app.use('/api/operations', operationsRoutes);
 
-// MongoDB Connection
-mongoose.connect(process.env.MONGO_URI!)
+const PORT = process.env.PORT || 5000;
+
+// Connect to MongoDB and start server
+mongoose
+  .connect(process.env.MONGO_URI as string)
   .then(() => {
-    console.log('✅ MongoDB connected');
-    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+    console.log('MongoDB connected');
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
   })
-  .catch(err => {
-    console.error('❌ MongoDB connection error:', err);
-  });
+  .catch((err) => console.error('MongoDB connection error:', err));
+
+export default app; 

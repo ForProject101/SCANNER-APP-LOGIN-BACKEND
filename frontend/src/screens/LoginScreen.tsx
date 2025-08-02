@@ -10,6 +10,7 @@ import {
   SafeAreaView,
   KeyboardAvoidingView,
   Platform,
+  ActivityIndicator,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -17,15 +18,16 @@ export default function LoginScreen({ navigation }: any) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async () => {
     if (!email || !password) {
       Alert.alert('Missing Info', 'Please enter both email and password');
       return;
     }
-
+    setLoading(true);
     try {
-      const res = await fetch('http://192.168.0.34:5000/api/auth/login', {
+      const res = await fetch('https://scanner-app-login-backend-ddz7-git-main-forproject101s-projects.vercel.app/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -37,12 +39,14 @@ export default function LoginScreen({ navigation }: any) {
         Alert.alert('Login Successful', 'Welcome!');
         navigation.replace('Home', { 
           user: {
+            id: data.technician?._id || '',
             name: data.technician?.name || 'Unknown',
             surname: data.technician?.surname || 'User',
             department: data.technician?.department || 'Unknown Department',
             task: data.technician?.task || 'Unknown Task',
             avatar: '👨‍🔧'
-          }
+          },
+          token: data.token || ''
         });
       } else {
         Alert.alert('Login Failed', data.message || 'Unknown error');
@@ -50,6 +54,7 @@ export default function LoginScreen({ navigation }: any) {
     } catch (error) {
       Alert.alert('Network Error', 'Please try again later');
     }
+    setLoading(false);
   };
 
   return (
@@ -64,7 +69,7 @@ export default function LoginScreen({ navigation }: any) {
             <View style={styles.logoCircle}>
               <Ionicons name="construct" size={60} color="#007AFF" />
             </View>
-            <Text style={styles.appTitle}>Technician Hub</Text>
+            <Text style={styles.appTitle}>Embroidery Tech Hub</Text>
             <Text style={styles.appSubtitle}>Screen Scanner & Repair Tracker</Text>
           </View>
 
@@ -84,6 +89,7 @@ export default function LoginScreen({ navigation }: any) {
                 keyboardType="email-address"
                 onChangeText={setEmail}
                 value={email}
+                editable={!loading}
               />
             </View>
 
@@ -97,10 +103,12 @@ export default function LoginScreen({ navigation }: any) {
                 secureTextEntry={!showPassword}
                 onChangeText={setPassword}
                 value={password}
+                editable={!loading}
               />
               <TouchableOpacity 
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
+                disabled={loading}
               >
                 <Ionicons 
                   name={showPassword ? "eye-outline" : "eye-off-outline"} 
@@ -111,15 +119,26 @@ export default function LoginScreen({ navigation }: any) {
             </View>
 
             {/* Login Button */}
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Ionicons name="log-in-outline" size={20} color="#fff" style={styles.buttonIcon} />
-              <Text style={styles.loginButtonText}>Sign In</Text>
+            <TouchableOpacity 
+              style={[styles.loginButton, loading && styles.loginButtonDisabled]} 
+              onPress={handleLogin}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <>
+                  <Ionicons name="log-in-outline" size={20} color="#fff" style={styles.buttonIcon} />
+                  <Text style={styles.loginButtonText}>Sign In</Text>
+                </>
+              )}
             </TouchableOpacity>
 
             {/* Register Link */}
             <TouchableOpacity 
               style={styles.registerLink}
               onPress={() => navigation.navigate('Register')}
+              disabled={loading}
             >
               <Text style={styles.registerText}>
                 Don't have an account? <Text style={styles.registerTextBold}>Register here</Text>
@@ -232,6 +251,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
+  },
+  loginButtonDisabled: {
+    backgroundColor: '#ccc',
+    shadowOpacity: 0.1,
   },
   buttonIcon: {
     marginRight: 8,

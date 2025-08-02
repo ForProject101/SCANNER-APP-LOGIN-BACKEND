@@ -5,11 +5,8 @@ import {
   scanScreen,
   stopSession,
   getSessionSummary,
+  getAllTechniciansStats,
 } from '../controllers/sessionController';
-// Import routes
-import authRoutes from '../routes/auth';
-import sessionRoutes from '../routes/sessions';
-
 
 const router = express.Router();
 
@@ -17,6 +14,7 @@ router.post('/start', startSession);
 router.post('/scan', scanScreen);
 router.post('/stop', stopSession);
 router.get('/summary/:technicianId', getSessionSummary);
+router.get('/all-stats', getAllTechniciansStats);
 
 export default router;
 

@@ -10,6 +10,7 @@ import {
   ScrollView,
   SafeAreaView,
   KeyboardAvoidingView,
+  ActivityIndicator,
   Platform,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -22,15 +23,16 @@ export default function RegisterScreen({ navigation }: any) {
   const [department, setDepartment] = useState('');
   const [task, setTask] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+   const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
     if (!name || !surname || !email || !password || !department || !task) {
       Alert.alert('Please fill in all fields');
       return;
     }
-
+    setLoading(true);
     try {
-      const res = await fetch('http://192.168.0.34:5000/api/auth/register', {
+      const res = await fetch('https://scanner-app-login-backend-ddz7-git-main-forproject101s-projects.vercel.app/api/auth/register', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, surname, email, password, department, task }),
@@ -47,9 +49,10 @@ export default function RegisterScreen({ navigation }: any) {
     } catch (error) {
       Alert.alert('Network error', 'Please try again later');
     }
+    setLoading(false);
   };
 
-  return (
+   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -61,7 +64,7 @@ export default function RegisterScreen({ navigation }: any) {
             <View style={styles.logoCircle}>
               <Ionicons name="person-add" size={60} color="#007AFF" />
             </View>
-            <Text style={styles.appTitle}>Join Technician Hub</Text>
+            <Text style={styles.appTitle}>Embroidery Tech Hub</Text>
             <Text style={styles.appSubtitle}>Create your account</Text>
           </View>
 
@@ -75,10 +78,11 @@ export default function RegisterScreen({ navigation }: any) {
               <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="First Name"
+                placeholder="First Name *"
                 placeholderTextColor="#999"
                 onChangeText={setName}
                 value={name}
+                editable={!loading}
               />
             </View>
 
@@ -87,10 +91,11 @@ export default function RegisterScreen({ navigation }: any) {
               <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Last Name"
+                placeholder="Last Name *"
                 placeholderTextColor="#999"
                 onChangeText={setSurname}
                 value={surname}
+                editable={!loading}
               />
             </View>
 
@@ -99,12 +104,13 @@ export default function RegisterScreen({ navigation }: any) {
               <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email Address"
+                placeholder="Email Address *"
                 placeholderTextColor="#999"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 onChangeText={setEmail}
                 value={email}
+                editable={!loading}
               />
             </View>
 
@@ -113,15 +119,17 @@ export default function RegisterScreen({ navigation }: any) {
               <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Password"
+                placeholder="Password *"
                 placeholderTextColor="#999"
                 secureTextEntry={!showPassword}
                 onChangeText={setPassword}
                 value={password}
+                editable={!loading}
               />
               <TouchableOpacity 
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
+                disabled={loading}
               >
                 <Ionicons 
                   name={showPassword ? "eye-outline" : "eye-off-outline"} 
@@ -136,10 +144,11 @@ export default function RegisterScreen({ navigation }: any) {
               <Ionicons name="business-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Department"
+                placeholder="Department *"
                 placeholderTextColor="#999"
                 onChangeText={setDepartment}
                 value={department}
+                editable={!loading}
               />
             </View>
 
@@ -148,23 +157,35 @@ export default function RegisterScreen({ navigation }: any) {
               <Ionicons name="construct-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Task/Role"
+                placeholder="Task/Role *"
                 placeholderTextColor="#999"
                 onChangeText={setTask}
                 value={task}
+                editable={!loading}
               />
             </View>
 
             {/* Register Button */}
-            <TouchableOpacity style={styles.registerButton} onPress={handleRegister}>
-              <Ionicons name="person-add-outline" size={20} color="#fff" style={styles.buttonIcon} />
-              <Text style={styles.registerButtonText}>Create Account</Text>
+            <TouchableOpacity 
+              style={[styles.registerButton, loading && styles.registerButtonDisabled]} 
+              onPress={handleRegister}
+              disabled={loading}
+            >
+              {loading ? (
+                <ActivityIndicator color="#fff" size="small" />
+              ) : (
+                <>
+                  <Ionicons name="person-add-outline" size={20} color="#fff" style={styles.buttonIcon} />
+                  <Text style={styles.registerButtonText}>Create Account</Text>
+                </>
+              )}
             </TouchableOpacity>
 
             {/* Login Link */}
             <TouchableOpacity 
               style={styles.loginLink}
               onPress={() => navigation.navigate('Login')}
+              disabled={loading}
             >
               <Text style={styles.loginText}>
                 Already have an account? <Text style={styles.loginTextBold}>Sign in here</Text>
@@ -266,7 +287,7 @@ const styles = StyleSheet.create({
     padding: 8,
   },
   registerButton: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#007AFF',
     borderRadius: 12,
     paddingVertical: 16,
     flexDirection: 'row',
@@ -278,6 +299,10 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 4,
+  },
+  registerButtonDisabled: {
+    backgroundColor: '#ccc',
+    shadowOpacity: 0.1,
   },
   buttonIcon: {
     marginRight: 8,

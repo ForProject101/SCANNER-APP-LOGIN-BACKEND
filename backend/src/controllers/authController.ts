@@ -51,6 +51,22 @@ export const login = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ id: technician._id }, JWT_SECRET, { expiresIn: '7d' });
 
+    // Log the login operation
+    try {
+      const Operation = (await import('../models/Operation')).default;
+      await Operation.create({
+        technicianId: technician._id,
+        operationType: 'LOGIN',
+        details: {
+          loginTime: new Date(),
+          deviceInfo: req.headers['user-agent'] || 'Unknown device'
+        }
+      });
+    } catch (logError) {
+      console.error('Failed to log login operation:', logError);
+      // Don't fail the login if logging fails
+    }
+
     res.json({ message: 'Login successful', token, technician });
   } catch (err) {
     console.error('Login error:', err);

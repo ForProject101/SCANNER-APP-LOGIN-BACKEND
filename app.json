@@ -1,41 +1,26 @@
 {
   "expo": {
-    "name": "frontend",
-    "slug": "frontend",
+    "name": "Embroidery DT",
+    "slug": "embroidery-dt",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
     "splash": {
-      "image": "./assets/splash-icon.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "ios": {
-      "supportsTablet": true
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0
     },
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "assetBundlePatterns": ["**/*"],
     "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true,
-      "permissions": [
-        "android.permission.CAMERA"
-      ],
-      "package": "com.alphaman99.frontend"
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "plugins": [
-      "expo-barcode-scanner"
-    ],
-    "extra": {
-      "eas": {
-        "projectId": "1a292320-f48e-4df1-abe4-2e632a7d942b"
-      }
+      "package": "com.embroiderydt.app",
+      "versionCode": 1
     }
   }
 }
