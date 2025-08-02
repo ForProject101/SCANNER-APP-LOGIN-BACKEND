@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, View, StyleSheet } from 'react-native';
+import { ActivityIndicator, View, Text, StyleSheet } from 'react-native';
 import * as Updates from 'expo-updates';
 import { NavigationContainer } from '@react-navigation/native';
 import AuthNavigator from './frontend/src/screens/navigation/AuthNavigator';
@@ -30,6 +30,7 @@ export default function App() {
     return (
       <View style={styles.loader}>
         <ActivityIndicator size="large" color="#007AFF" />
+        <Text style={styles.updateText}>CHECKING FOR UPDATES, PLEASE WAIT...</Text>
       </View>
     );
   }
@@ -47,5 +48,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#f2f2f2',
+  },
+  updateText: {
+    marginTop: 20,
+    fontSize: 16,
+    color: '#333',
+    fontWeight: '500',
   },
 });

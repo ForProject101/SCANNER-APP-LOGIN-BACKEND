@@ -15,10 +15,20 @@
       "fallbackToCacheTimeout": 0
     },
     "runtimeVersion": "1.0.0",
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "android": {
       "package": "com.embroiderydt.app",
       "versionCode": 1
-    }
+    },
+    "extra": {
+      "eas": {
+        "projectId": "98fb71e4-9a58-408d-96e9-2cbfca083e7d"
+      }
+    },
+    "plugins": [
+      "expo-barcode-scanner"
+    ]
   }
 }
