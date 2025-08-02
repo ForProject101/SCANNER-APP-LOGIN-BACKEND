@@ -3,6 +3,7 @@
     "name": "Embroidery DT",
     "slug": "embroidery-dt",
     "version": "1.0.0",
+    "runtimeVersion": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "splash": {
