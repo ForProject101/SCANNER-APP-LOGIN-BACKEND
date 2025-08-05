@@ -35,3 +35,15 @@ yarn-error.*
 
 # typescript
 *.tsbuildinfo
+# Ignore dev tools, unused folders
+node_modules
+.git
+.gitignore
+README.md
+assets/dev/
+__tests__/
+docs/
+scripts/
+
+*.log
+*.md
