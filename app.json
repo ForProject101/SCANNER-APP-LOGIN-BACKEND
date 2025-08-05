@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "name": "EmbroideryTech",
+    "slug": "EmbroideryTech",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/ScannImage.png",
+    "splash": {
+      "image": "./assets/ScannImage.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "updates": {
+      "fallbackToCacheTimeout": 0
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "permissions": [
+        "CAMERA"
+      ],
+      "package": "com.alphaman99.embroiderytech",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FFFFFF"
+      }
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "0d34f138-aa00-4c0e-be5f-a063d5df8155"
+      }
+    }
+  }
+}
