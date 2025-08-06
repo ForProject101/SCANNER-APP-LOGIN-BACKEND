@@ -1,3 +1,4 @@
+// src/screens/RegisterScreen.tsx
 import React, { useState } from 'react';
 import {
   View,
@@ -5,15 +6,15 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Alert,
   ScrollView,
   SafeAreaView,
   KeyboardAvoidingView,
+  ActivityIndicator,
   Platform,
-  ActivityIndicator
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import Toast from 'react-native-toast-message';
-import * as Animatable from 'react-native-animatable';
+
 
 const colorPalette = {
   primary: '#6C63FF',
@@ -37,94 +38,94 @@ export default function RegisterScreen({ navigation }: any) {
   const [department, setDepartment] = useState('');
   const [task, setTask] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const validateEmail = (email: string) => {
-    const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return re.test(email);
-  };
-
-  const validatePassword = (password: string) => {
-    return password.length >= 6;
-  };
+  const [loading, setLoading] = useState(false);
 
   const handleRegister = async () => {
-    if (!name || !surname || !email || !password || !department || !task) {
-      Toast.show({
-        type: 'error',
-        text1: 'Incomplete Form',
-        text2: 'Please fill in all fields',
-        position: 'bottom',
-        visibilityTime: 3000,
-      });
+    console.log('Register button pressed');
+    
+    // Validate all fields
+    if (!name.trim() || !surname.trim() || !email.trim() || !password.trim() || !department.trim() || !task.trim()) {
+      Alert.alert('Missing Info', 'Please fill in all fields');
       return;
     }
 
-    if (!validateEmail(email)) {
-      Toast.show({
-        type: 'error',
-        text1: 'Invalid Email',
-        text2: 'Please enter a valid email address',
-        position: 'bottom',
-        visibilityTime: 3000,
-      });
+    // Basic email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address');
       return;
     }
 
-    if (!validatePassword(password)) {
-      Toast.show({
-        type: 'error',
-        text1: 'Weak Password',
-        text2: 'Password must be at least 6 characters',
-        position: 'bottom',
-        visibilityTime: 3000,
-      });
+    // Password validation
+    if (password.length < 6) {
+      Alert.alert('Weak Password', 'Password must be at least 6 characters long');
       return;
     }
 
-    setIsLoading(true);
+    setLoading(true);
+    console.log('Starting registration process...');
 
     try {
-      const res = await fetch('https://scanner-app-login-backend-ddz7.vercel.app/api/auth/register', {
+      const requestBody = {
+        name: name.trim(),
+        surname: surname.trim(),
+        email: email.trim().toLowerCase(),
+        password: password,
+        department: department.trim(),
+        task: task.trim()
+      };
+
+      console.log('Sending registration request with data:', { ...requestBody, password: '[HIDDEN]' });
+
+      const res = await fetch('https://scanner-app-login-backend-ddz7-git-main-forproject101s-projects.vercel.app/api/auth/register', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, surname, email, password, department, task }),
+        headers: { 
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify(requestBody),
       });
+
+      console.log('Response status:', res.status);
+      console.log('Response headers:', res.headers);
 
       const data = await res.json();
+      console.log('Response data:', data);
 
       if (res.ok) {
-        Toast.show({
-          type: 'success',
-          text1: 'Registration Complete',
-          text2: 'Your account has been created successfully!',
-          position: 'bottom',
-          visibilityTime: 3000,
-        });
-        navigation.navigate('Login');
+        Alert.alert(
+          'Registration Successful', 
+          'Your account has been created successfully!',
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                // Clear form
+                setName('');
+                setSurname('');
+                setEmail('');
+                setPassword('');
+                setDepartment('');
+                setTask('');
+                // Navigate to login
+                navigation.navigate('Login');
+              }
+            }
+          ]
+        );
       } else {
-        Toast.show({
-          type: 'error',
-          text1: 'Registration Failed',
-          text2: data.message || 'Please try again',
-          position: 'bottom',
-          visibilityTime: 3000,
-        });
+        Alert.alert('Registration Failed', data.message || 'Unknown error occurred');
       }
     } catch (error) {
-      Toast.show({
-        type: 'error',
-        text1: 'Connection Error',
-        text2: 'Unable to connect to the server',
-        position: 'bottom',
-        visibilityTime: 3000,
-      });
+      console.error('Registration error:', error);
+      Alert.alert('Network Error', 'Please check your internet connection and try again');
     } finally {
-      setIsLoading(false);
+      setLoading(false);
+      console.log('Registration process completed');
     }
   };
 
-  return (
+   return (
     <SafeAreaView style={styles.container}>
       <KeyboardAvoidingView 
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -135,125 +136,124 @@ export default function RegisterScreen({ navigation }: any) {
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
         >
-          {/* Animated Logo Section */}
-          <Animatable.View 
-            animation="fadeInDown"
-            duration={1000}
-            style={styles.logoContainer}
-          >
+          {/* Logo Section */}
+          <View style={styles.logoContainer}>
             <View style={styles.logoCircle}>
-              <Ionicons name="person-add" size={60} color={colorPalette.primary} />
+              <Ionicons name="person-add" size={60} color="#6C63FF" />
             </View>
             <Text style={styles.appTitle}>Embroidery Tech Hub</Text>
-            <Text style={styles.appSubtitle}>Create your heavenly account</Text>
-          </Animatable.View>
+            <Text style={styles.appSubtitle}>Create your account</Text>
+          </View>
 
           {/* Registration Form */}
-          <Animatable.View 
-            animation="fadeInUp"
-            duration={1000}
-            delay={300}
-            style={styles.formContainer}
-          >
+          <View style={styles.formContainer}>
             <Text style={styles.registerTitle}>Create Account</Text>
-            <Text style={styles.registerSubtitle}>Fill in your details below</Text>
+            <Text style={styles.registerSubtitle}>Fill in your details</Text>
 
             {/* Name Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={colorPalette.muted} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="First Name"
-                placeholderTextColor={colorPalette.muted}
+                placeholder="First Name *"
+                placeholderTextColor="#999"
                 onChangeText={setName}
                 value={name}
+                editable={!loading}
               />
             </View>
 
             {/* Surname Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="person-outline" size={20} color={colorPalette.muted} style={styles.inputIcon} />
+              <Ionicons name="person-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Last Name"
-                placeholderTextColor={colorPalette.muted}
+                placeholder="Last Name *"
+                placeholderTextColor="#999"
                 onChangeText={setSurname}
                 value={surname}
+                editable={!loading}
               />
             </View>
 
             {/* Email Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="mail-outline" size={20} color={colorPalette.muted} style={styles.inputIcon} />
+              <Ionicons name="mail-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Email Address"
-                placeholderTextColor={colorPalette.muted}
+                placeholder="Email Address *"
+                placeholderTextColor="#999"
                 autoCapitalize="none"
                 keyboardType="email-address"
                 onChangeText={setEmail}
                 value={email}
+                editable={!loading}
               />
             </View>
 
             {/* Password Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="lock-closed-outline" size={20} color={colorPalette.muted} style={styles.inputIcon} />
+              <Ionicons name="lock-closed-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Password (min 6 chars)"
-                placeholderTextColor={colorPalette.muted}
+                placeholder="Password *"
+                placeholderTextColor="#999"
                 secureTextEntry={!showPassword}
                 onChangeText={setPassword}
                 value={password}
+                editable={!loading}
               />
               <TouchableOpacity 
                 style={styles.eyeIcon}
                 onPress={() => setShowPassword(!showPassword)}
+                disabled={loading}
               >
                 <Ionicons 
                   name={showPassword ? "eye-outline" : "eye-off-outline"} 
                   size={20} 
-                  color={colorPalette.muted} 
+                  color="#666" 
                 />
               </TouchableOpacity>
             </View>
 
             {/* Department Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="business-outline" size={20} color={colorPalette.muted} style={styles.inputIcon} />
+              <Ionicons name="business-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Department"
-                placeholderTextColor={colorPalette.muted}
+                placeholder="Department *"
+                placeholderTextColor="#999"
                 onChangeText={setDepartment}
                 value={department}
+                editable={!loading}
               />
             </View>
 
             {/* Task Input */}
             <View style={styles.inputContainer}>
-              <Ionicons name="construct-outline" size={20} color={colorPalette.muted} style={styles.inputIcon} />
+              <Ionicons name="construct-outline" size={20} color="#666" style={styles.inputIcon} />
               <TextInput
                 style={styles.input}
-                placeholder="Task/Role"
-                placeholderTextColor={colorPalette.muted}
+                placeholder="Task/Role *"
+                placeholderTextColor="#999"
                 onChangeText={setTask}
                 value={task}
+                editable={!loading}
               />
             </View>
 
             {/* Register Button */}
             <TouchableOpacity 
-              style={[styles.registerButton, isLoading && styles.buttonDisabled]}
+              style={[styles.registerButton, loading && styles.registerButtonDisabled]} 
               onPress={handleRegister}
-              disabled={isLoading}
+              disabled={loading}
+              activeOpacity={0.8}
             >
-              {isLoading ? (
-                <ActivityIndicator size="small" color={colorPalette.light} />
+              {loading ? (
+                <ActivityIndicator color="#fff" size="small" />
               ) : (
                 <>
-                  <Ionicons name="person-add-outline" size={20} color={colorPalette.light} style={styles.buttonIcon} />
+                  <Ionicons name="person-add-outline" size={20} color="#fff" style={styles.buttonIcon} />
                   <Text style={styles.registerButtonText}>Create Account</Text>
                 </>
               )}
@@ -263,13 +263,13 @@ export default function RegisterScreen({ navigation }: any) {
             <TouchableOpacity 
               style={styles.loginLink}
               onPress={() => navigation.navigate('Login')}
-              disabled={isLoading}
+              disabled={loading}
             >
               <Text style={styles.loginText}>
                 Already have an account? <Text style={styles.loginTextBold}>Sign in here</Text>
               </Text>
             </TouchableOpacity>
-          </Animatable.View>
+          </View>
         </ScrollView>
       </KeyboardAvoidingView>
     </SafeAreaView>
@@ -278,11 +278,12 @@ export default function RegisterScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.99,
     backgroundColor: colorPalette.background,
+    paddingVertical:1,
   },
   keyboardView: {
-    flex: 1,
+    flex: 0.99,
   },
   scrollContent: {
     flexGrow: 1,
@@ -291,11 +292,10 @@ const styles = StyleSheet.create({
   },
   logoContainer: {
     alignItems: 'center',
-    marginBottom: 32,
-    marginTop: 20,
+    marginBottom: 48,
   },
   logoCircle: {
-    width: 120,
+     width: 120,
     height: 120,
     borderRadius: 60,
     backgroundColor: colorPalette.light,
@@ -311,9 +311,8 @@ const styles = StyleSheet.create({
   appTitle: {
     fontSize: 28,
     fontWeight: 'bold',
-    color: colorPalette.text,
+    color: '#1a1a1a',
     marginBottom: 4,
-    fontFamily: 'sans-serif-medium',
   },
   appSubtitle: {
     fontSize: 16,
@@ -325,7 +324,7 @@ const styles = StyleSheet.create({
     backgroundColor: colorPalette.light,
     borderRadius: 20,
     padding: 32,
-    shadowColor: colorPalette.dark,
+   shadowColor: colorPalette.dark,
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
@@ -337,14 +336,12 @@ const styles = StyleSheet.create({
     color: colorPalette.text,
     marginBottom: 8,
     textAlign: 'center',
-    fontFamily: 'sans-serif-medium',
   },
   registerSubtitle: {
     fontSize: 16,
     color: colorPalette.muted,
     textAlign: 'center',
     marginBottom: 32,
-    fontFamily: 'sans-serif',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -363,8 +360,7 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingVertical: 16,
     fontSize: 16,
-    color: colorPalette.text,
-    fontFamily: 'sans-serif',
+    color: '#1a1a1a',
   },
   eyeIcon: {
     padding: 8,
@@ -383,8 +379,9 @@ const styles = StyleSheet.create({
     shadowRadius: 8,
     elevation: 4,
   },
-  buttonDisabled: {
-    backgroundColor: colorPalette.muted,
+  registerButtonDisabled: {
+   backgroundColor: colorPalette.muted,
+    shadowOpacity: 0.1,
   },
   buttonIcon: {
     marginRight: 8,
@@ -393,7 +390,6 @@ const styles = StyleSheet.create({
     color: colorPalette.light,
     fontSize: 18,
     fontWeight: 'bold',
-    fontFamily: 'sans-serif-medium',
   },
   loginLink: {
     marginTop: 24,
@@ -401,12 +397,10 @@ const styles = StyleSheet.create({
   },
   loginText: {
     fontSize: 16,
-    color: colorPalette.muted,
-    fontFamily: 'sans-serif',
+     color: colorPalette.muted,
   },
   loginTextBold: {
     color: colorPalette.primary,
     fontWeight: 'bold',
-    fontFamily: 'sans-serif-medium',
   },
 });

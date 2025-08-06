@@ -35,8 +35,6 @@ export default function HomeScreen({ navigation, route }: any) {
   const [scans, setScans] = useState([]);
   const [loading, setLoading] = useState(true);
   const token = route.params?.token;
-  
-
   // User data and API configuration
   const user = route.params?.user || {
     name: 'Unknown',
@@ -45,10 +43,7 @@ export default function HomeScreen({ navigation, route }: any) {
     task: 'Unknown Task',
     avatar: '👨‍🔧'
   };
-
   const API_BASE_URL = 'https://scanning-backend-server-p3re.vercel.app';
-
-
   // Fetch operations when screen is focused
  const saveScanToBackend = async (scanData: any, operationType = 'SCAN') => {
   try {
@@ -64,7 +59,6 @@ export default function HomeScreen({ navigation, route }: any) {
         timestamp: new Date().toISOString(),
       }),
     });
-
     const result = await response.json();
     if (!response.ok) {
       throw new Error(result.error || 'Failed to save scan');
@@ -75,8 +69,6 @@ export default function HomeScreen({ navigation, route }: any) {
     console.error('❌ Error saving scan:', err);
   }
 };
-
-
   // Helper Functions
   const generateRandomBarcode = () => {
     const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -144,7 +136,7 @@ export default function HomeScreen({ navigation, route }: any) {
     setElapsedSeconds(0);
     
     saveScanToBackend({ startTime: now.toISOString() }, 'SESSION_START');
-    Alert.alert('Task Started', 'Choose your scanning method.');
+    
   };
 
   const handleScanScreen = () => {
@@ -218,16 +210,8 @@ export default function HomeScreen({ navigation, route }: any) {
   durationSeconds: elapsedSeconds
 }, 'SESSION_END');
 
-
-
-
-
-
-
-
-    
     Alert.alert('Session Ended', 
-      `Total screens: ${screensScanned}\nReparable: ${reparable}\nBeyond Repair: ${beyondRepair}\nDuration: ${formatElapsedTime(elapsedSeconds)}`
+      `Total screens: ${screensScanned}\nReparable: ${reparable}\nBeyond Repair: ${beyondRepair}\nDuration: ${formatElapsedTime(elapsedMilliseconds)}`
     );
   };
   const handleLogout = () => {
@@ -354,9 +338,6 @@ export default function HomeScreen({ navigation, route }: any) {
                 <Ionicons name="camera-outline" size={20} color="#fff" />
                 <Text style={styles.buttonText}>Scan with Camera</Text>
               </TouchableOpacity>
-              
-              
-              
               <TouchableOpacity 
                 style={[styles.actionButton, { backgroundColor: '#fb8c00' }]}
                 onPress={() => setManualInputVisible(true)}
@@ -365,7 +346,6 @@ export default function HomeScreen({ navigation, route }: any) {
                 <Text style={styles.buttonText}>Manual Entry</Text>
               </TouchableOpacity>
             </View>
-            
             <TouchableOpacity 
               style={[styles.primaryButton, { backgroundColor: '#d32f2f' }]}
               onPress={handleStopTask}
@@ -500,7 +480,7 @@ export default function HomeScreen({ navigation, route }: any) {
                 onPress={() => handleStatusSelect('Beyond Repair')}
               >
                 <Ionicons name="close-circle" size={20} color="#fff" />
-                <Text style={styles.statusButtonText}>Beyond Repair</Text>
+                <Text style={styles.statusButtonText}>Write-Off</Text>
               </Pressable>
             </View>
           </View>

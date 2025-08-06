@@ -217,7 +217,7 @@ export default function LoginScreen({ navigation }: any) {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    flex: 0.99,
     backgroundColor: colorPalette.background,
   },
   keyboardView: {
@@ -267,7 +267,7 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 4,
+    elevation: 5,
   },
   loginTitle: {
     fontSize: 24,
